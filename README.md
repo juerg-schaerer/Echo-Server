@@ -90,3 +90,72 @@ The server is built using Python's http.server module and includes:
 - Automatic OpenAPI specification generation
 - Comprehensive error handling
 - Request logging for debugging
+
+## Docker
+
+The Echo Server uses Chainguard's Wolfi-based Python images for enhanced security and minimal attack surface.
+
+### Security Features
+
+- Based on Wolfi, a Linux undistro designed for containers
+- Uses Chainguard's hardened Python images with:
+  - Minimal base image with only required components
+  - Regular security updates and patches
+  - Built with security-focused toolchain
+  - Signed and verified packages
+- Multi-stage build reduces attack surface
+- No development dependencies in final image
+- Uses virtual environment for isolation
+- No Python cache files included
+- Minimal runtime dependencies
+
+### Build, Push and Run
+
+1. Build the Docker image:
+```bash
+docker build -t juerg/echo-server:v1 .
+ ```
+2. Push the image to Docker Hub:
+```bash
+docker push juerg/echo-server:v1
+ ```
+3. Run the container:
+```bash
+docker run -p 8080:8080 juerg/echo-server:v1
+ ```
+
+### Security Scanning with Docker Scout
+
+1. Enable Docker Scout for your repository:
+```bash
+docker scout enroll
+ ```
+2. Enable the repository for scanning:
+```bash
+docker scout repo enable --org juerg juerg/echo-server:v1
+ ```
+3. Scan for vulnerabilities:
+```bash
+docker scout cves --only-package express
+ ```
+
+
+Output looks like this:
+ ✓ SBOM of image already cached, 50 packages indexed
+ ✓ No vulnerable package detected
+
+Overview
+
+                    │       Analyzed Image
+────────────────────┼──────────────────────────────
+  Target            │
+    digest          │  9d5f2ec6b451
+    platform        │ linux/arm64
+    vulnerabilities │    0C     0H     0M     0L
+    size            │ 24 MB
+    packages        │ 0
+
+Packages and Vulnerabilities
+
+  No vulnerable packages detected
+

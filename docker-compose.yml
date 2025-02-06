@@ -1,0 +1,27 @@
+networks:
+  APIM:
+    driver: bridge
+
+services:
+  echo-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: juerg/echo-server:v1
+    container_name: echo-server
+    networks:
+      - APIM
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/header"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    cap_drop:
+      - ALL
